@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../features/auth/data/datasources/local/token_manager.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/home/presentation/pages/add_ticket_page.dart';
@@ -21,6 +22,15 @@ Raw<GoRouter> routers(Ref ref) {
         name: RouteName.login,
         builder: (context, state) {
           return const LoginPage();
+        },
+        redirect: (context, state) async {
+          TokenManager manager = await TokenManager.init();
+          final token = await manager.read();
+          if (token != null) {
+            return RouteName.home;
+          } else {
+            return RouteName.login;
+          }
         },
       ),
       GoRoute(
