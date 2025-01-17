@@ -8,7 +8,7 @@ part 'get_tickets_provider.g.dart';
 
 @riverpod
 class GetTickets extends _$GetTickets {
-  final List<TicketModel> listTicket = [];
+  final List<TicketModel> _listTicket = [];
   @override
   FutureOr<List<TicketModel>> build() async {
     TicketsUsecase ticket = ref.read(ticketUsecaseProvider);
@@ -18,11 +18,22 @@ class GetTickets extends _$GetTickets {
         throw error;
       },
       (data) {
-        listTicket.addAll(data);
+        _listTicket.addAll(data);
         return data;
       },
     );
   }
 
   //fitler by status
+
+  void filterByStatus({required String status}) {
+    // ubah state async data berdasarkan filter status
+    final filterData = _listTicket;
+    if (status == 'all') {
+      state = AsyncData(_listTicket);
+    } else {
+      final filter = filterData.where((element) => element.status == status).toList();
+      state = AsyncData(filter);
+    }
+  }
 }
