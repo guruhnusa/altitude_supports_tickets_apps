@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -8,6 +9,7 @@ import '../../../../core/extensions/build_context_ext.dart';
 import '../../../../core/extensions/string_ext.dart';
 import '../../../../core/helpers/buttons/buttons.dart';
 import '../../../../core/helpers/text_field/custom_text_field.dart';
+import '../../../../core/helpers/widgets/custom_appbar.dart';
 import '../../../../core/routes/router_name.dart';
 import '../../../../core/utils/constant/app_colors.dart';
 
@@ -55,21 +57,12 @@ class RegisterPage extends HookConsumerWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              context.goNamed(PathName.login);
-            },
-          ),
-          backgroundColor: Colors.white,
-          title: const Text('Register Account',
-              style: TextStyle(
-                color: AppColors.neutral900,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              )),
-          centerTitle: true,
+        appBar: CustomAppBar(
+          title: 'Register',
+          isBack: true,
+          onBack: () {
+            context.goNamed(PathName.login);
+          },
         ),
         body: ListView(
           padding: const EdgeInsets.all(20),

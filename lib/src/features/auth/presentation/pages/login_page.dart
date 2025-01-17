@@ -147,7 +147,9 @@ class LoginPage extends HookConsumerWidget {
           const Gap(16),
           Button.filled(
             // disabled: authState.isLoading || isButtonDisabled.value,
-            onPressed: () {},
+            onPressed: () {
+              context.pushReplacementNamed(PathName.home);
+            },
             label: 'Login',
           ),
           const Gap(16),
@@ -165,7 +167,7 @@ class LoginPage extends HookConsumerWidget {
               InkWell(
                 onTap: () {
                   WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-                  context.goNamed(RouteName.register);
+                  context.goNamed(PathName.register);
                 },
                 child: const Text(
                   'Register',
