@@ -48,6 +48,7 @@ class AddTicketPage extends HookConsumerWidget {
         }
       },
     );
+    final addTicketState = ref.watch(addTicketProvider);
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -90,7 +91,7 @@ class AddTicketPage extends HookConsumerWidget {
           ),
           const Gap(24),
           Button.filled(
-            disabled: !buttonEnabled.value,
+            disabled: !buttonEnabled.value || addTicketState.isLoading,
             onPressed: () {
               ref.read(addTicketProvider.notifier).action(
                     param: TicketParam(

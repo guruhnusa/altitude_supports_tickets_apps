@@ -49,6 +49,9 @@ class DetailTicketPage extends HookConsumerWidget {
         }
       },
     );
+
+    final updateState = ref.watch(updateTicketProvider);
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Detail Ticket',
@@ -117,6 +120,7 @@ class DetailTicketPage extends HookConsumerWidget {
                     ),
                     const Gap(24),
                     Button.filled(
+                      disabled: updateState.isLoading,
                       onPressed: () {
                         ref.read(updateTicketProvider.notifier).action(
                               param: TicketParam(

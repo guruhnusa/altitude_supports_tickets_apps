@@ -155,7 +155,7 @@ class RegisterPage extends HookConsumerWidget {
               onPressed: () {
                 validation();
               },
-              label: 'Login',
+              label: 'Register',
             ),
           ],
         ),
