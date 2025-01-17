@@ -52,7 +52,7 @@ class RegisterPage extends HookConsumerWidget {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (didPop) {
+        if (!didPop) {
           context.goNamed(PathName.login);
         }
       },

@@ -6,10 +6,10 @@ import '../models/login_model.dart';
 import '../repository/auth_repository.dart';
 import 'param/login_param.dart';
 
-class Login implements UseCase<LoginModel, LoginParam> {
+class LoginUsecase implements UseCase<LoginModel, LoginParam> {
   final AuthRepository repository;
 
-  Login({required this.repository});
+  LoginUsecase({required this.repository});
   @override
   Future<Either<Failure, LoginModel>> call(LoginParam params) {
     return repository.login(param: params);

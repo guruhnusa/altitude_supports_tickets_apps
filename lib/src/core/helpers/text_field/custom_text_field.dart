@@ -21,6 +21,8 @@ class CustomTextField extends StatefulWidget {
   final VoidCallback? suffixOnPressed;
   final List<TextInputFormatter>? inputFormatters;
   final String? error;
+  final int? minLines;
+  final int? maxLines;
 
   const CustomTextField({
     super.key,
@@ -41,6 +43,8 @@ class CustomTextField extends StatefulWidget {
     this.suffixOnPressed,
     this.inputFormatters,
     this.error,
+    this.minLines,
+    this.maxLines = 1,
   });
 
   @override
@@ -87,6 +91,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         fontWeight: FontWeight.w400,
       ),
       maxLength: widget.maxLength,
+      minLines: widget.minLines,
+      maxLines: widget.maxLines,
       validator: widget.validator,
       obscureText: widget.obscureText ? isPassword : false,
       obscuringCharacter: '*',

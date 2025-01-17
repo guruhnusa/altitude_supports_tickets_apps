@@ -4,10 +4,10 @@ import '../../../../core/utils/errors/failure.dart';
 import '../../../../core/utils/usecase/usecases.dart';
 import '../repository/auth_repository.dart';
 
-class Logout implements UseCase<String, void> {
+class LogoutUsecase implements UseCase<String, void> {
   final AuthRepository repository;
 
-  Logout({required this.repository});
+  LogoutUsecase({required this.repository});
   @override
   Future<Either<Failure, String>> call(void params) {
     return repository.logout();

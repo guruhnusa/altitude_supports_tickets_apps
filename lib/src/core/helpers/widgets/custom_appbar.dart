@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../utils/constant/app_colors.dart';
@@ -19,6 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      forceMaterialTransparency: true,
       leading: isBack
           ? IconButton(
               icon: const Icon(Icons.arrow_back),
