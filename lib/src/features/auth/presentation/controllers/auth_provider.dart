@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../data/datasources/local/token_manager.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/param/login_param.dart';
 import '../../domain/usecases/param/register_param.dart';
 import '../../domain/usecases/register_usecase.dart';
+import 'fcm_token_provider.dart';
 import 'usecase/login_provider.dart';
 import 'usecase/logout_provider.dart';
 import 'usecase/register_provider.dart';
@@ -12,7 +16,7 @@ import 'usecase/register_provider.dart';
 part 'auth_provider.g.dart';
 
 @riverpod
-class AuthProvider extends _$AuthProvider {
+class Auth extends _$Auth {
   @override
   FutureOr<String?> build() {
     return null;
@@ -20,6 +24,8 @@ class AuthProvider extends _$AuthProvider {
 
   Future<void> login({required LoginParam param}) async {
     state = const AsyncLoading();
+    final fcmToken = await ref.watch(fcmTokenProvider.future);
+    log('FCM TOKEN : $fcmToken');
     LoginUsecase login = ref.read(loginUsecaseProvider);
     final result = await login(param);
     result.fold(
@@ -27,7 +33,9 @@ class AuthProvider extends _$AuthProvider {
         state = AsyncError(error, StackTrace.current);
         state = const AsyncData(null);
       },
-      (data) {
+      (data) async {
+        TokenManager tokenManager = await TokenManager.init();
+        await tokenManager.save(token: 'data.token');
         state = const AsyncData('Login Success');
       },
     );

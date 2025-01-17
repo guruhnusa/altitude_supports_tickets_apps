@@ -9,7 +9,7 @@ import '../../../../core/helpers/text_field/custom_text_field.dart';
 import '../../../../core/helpers/widgets/custom_appbar.dart';
 import '../../../../core/helpers/widgets/custom_drop_down.dart';
 import '../../../../core/utils/constant/app_colors.dart';
-import '../../data/datasources/local/filter_local_data.dart';
+import '../../data/datasources/local/status_local_data.dart';
 import '../../domain/models/filter_model.dart';
 
 class DetailTicketPage extends HookConsumerWidget {
@@ -20,7 +20,7 @@ class DetailTicketPage extends HookConsumerWidget {
     final titleController = useTextEditingController();
     final descriptionController = useTextEditingController();
 
-    final selectStatus = useState<FilterModel>(filterLocalData.first);
+    final selectStatus = useState<FilterModel>(statusLocalData.first);
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -73,7 +73,7 @@ class DetailTicketPage extends HookConsumerWidget {
           CustomDropDown<FilterModel>(
             hint: 'Status',
             selectedItem: selectStatus,
-            item: filterLocalData,
+            item: statusLocalData,
             itemLabelBuilder: (value) => value.title,
             onChanged: (value) {
               selectStatus.value = value!;

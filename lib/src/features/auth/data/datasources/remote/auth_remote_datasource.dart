@@ -76,9 +76,6 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
     try {
       final response = await httpClient.post(
         'logout',
-        options: Options(
-          validateStatus: (status) => status! < 500,
-        ),
       );
       if (response.statusCode == 200) {
         return const Right('Logout berhasil');

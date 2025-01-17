@@ -5,6 +5,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../features/auth/data/datasources/local/token_manager.dart';
+import '../routes/router_name.dart';
+import '../routes/routers.dart';
+
 part 'dio_provider.g.dart';
 
 final baseUrl = dotenv.env['BASE_URL'];
@@ -23,23 +27,20 @@ Dio dio(Ref ref) {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
-        // AuthLocalDatasource authLocalDatasource = await AuthLocalDatasource.init();
-        // final authToken = await authLocalDatasource.getBearerToken();
-        // options.headers['Authorization'] = 'Bearer $authToken';
-        // return handler.next(options);
+        TokenManager tokenManager = await TokenManager.init();
+        final token = await tokenManager.read();
+        options.headers['Authorization'] = 'Bearer $token';
+        return handler.next(options);
       },
       onResponse: (response, handler) {
         return handler.next(response);
       },
       onError: (error, handler) async {
         if (error.response?.statusCode == 401) {
-          // AuthLocalDatasource authLocalDatasource = await AuthLocalDatasource.init();
+          TokenManager tokenManager = await TokenManager.init();
+          await tokenManager.delete();
 
-          // await authLocalDatasource.removeAuth();
-          // ref.invalidate(mainIndexProvider);
-          // ref.invalidate(getUserPofileProvider);
-          // ref.invalidate(getPrivacyPolicyProvider);
-          // ref.read(routerProvider).goNamed(RouteName.login);
+          ref.read(routersProvider).pushReplacementNamed(PathName.login);
         }
         return handler.next(error);
       },

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "408285868481",
+    "project_id": "chatapps-70804",
+    "storage_bucket": "chatapps-70804.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408285868481:android:08119dc26ccbf37f06bf40",
+        "android_client_info": {
+          "package_name": "com.altitude.apps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "408285868481-a64oqg5ei0su2hk7j2niue3l4seri1c1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC72_xnXPUMxmS__e5QP-VrF0KVgturGFU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "408285868481-a64oqg5ei0su2hk7j2niue3l4seri1c1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "408285868481-d9iqooq5kp3v4virvp5ftv9nfb11qo8d.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatapps"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

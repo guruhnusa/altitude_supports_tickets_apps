@@ -1,4 +1,4 @@
-package com.example.altitude_support_ticket_apps
+package com.altitude.apps
 
 import io.flutter.embedding.android.FlutterActivity
 

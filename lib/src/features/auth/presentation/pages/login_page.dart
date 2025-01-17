@@ -9,6 +9,8 @@ import '../../../../core/helpers/buttons/buttons.dart';
 import '../../../../core/helpers/text_field/custom_text_field.dart';
 import '../../../../core/routes/router_name.dart';
 import '../../../../core/utils/constant/app_colors.dart';
+import '../../domain/usecases/param/login_param.dart';
+import '../controllers/auth_provider.dart';
 import '../widgets/custom_checkbox.dart';
 
 class LoginPage extends HookConsumerWidget {
@@ -148,6 +150,12 @@ class LoginPage extends HookConsumerWidget {
           Button.filled(
             // disabled: authState.isLoading || isButtonDisabled.value,
             onPressed: () {
+              ref.read(authProvider.notifier).login(
+                    param: LoginParam(
+                      username: usernameController.text,
+                      password: passwordController.text,
+                    ),
+                  );
               context.pushReplacementNamed(PathName.home);
             },
             label: 'Login',

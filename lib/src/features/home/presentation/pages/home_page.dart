@@ -8,6 +8,7 @@ import '../../../../core/helpers/buttons/buttons.dart';
 import '../../../../core/helpers/widgets/custom_appbar.dart';
 import '../../../../core/routes/router_name.dart';
 import '../../../../core/utils/constant/app_colors.dart';
+import '../../../../core/utils/permission/notification_services.dart';
 import '../../data/datasources/local/filter_local_data.dart';
 import '../../domain/models/filter_model.dart';
 import '../controllers/get_tickets_provider.dart';
@@ -26,6 +27,14 @@ class HomePage extends HookConsumerWidget {
 
     final ticketState = ref.watch(getTicketsProvider);
 
+    final notificationServices = NotificationServices();
+
+    useEffect(() {
+      notificationServices.setupNotifications(context);
+      notificationServices.setupNotificationInBacknTerminated(context);
+      return null;
+    }, []);
+
     return Scaffold(
       appBar: CustomAppBar(
         isBack: false,
@@ -35,7 +44,33 @@ class HomePage extends HookConsumerWidget {
             Icons.logout,
             color: Colors.red,
           ),
-          onPressed: () {},
+          onPressed: () {
+            //show dialog logout
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text('Logout'),
+                  content: const Text('Are you sure want to logout?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        context.pop();
+                        context.pushReplacementNamed(PathName.login);
+                      },
+                      child: const Text('Yes'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         ),
       ),
       body: Padding(
