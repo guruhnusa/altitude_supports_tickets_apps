@@ -7,7 +7,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../core/helpers/buttons/buttons.dart';
 import '../../../../core/helpers/text_field/custom_text_field.dart';
 import '../../../../core/helpers/widgets/custom_appbar.dart';
+import '../../../../core/helpers/widgets/custom_drop_down.dart';
 import '../../../../core/utils/constant/app_colors.dart';
+import '../../data/datasources/local/filter_local_data.dart';
+import '../../domain/models/filter_model.dart';
 
 class DetailTicketPage extends HookConsumerWidget {
   const DetailTicketPage({super.key});
@@ -16,6 +19,8 @@ class DetailTicketPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final titleController = useTextEditingController();
     final descriptionController = useTextEditingController();
+
+    final selectStatus = useState<FilterModel>(filterLocalData.first);
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -56,9 +61,29 @@ class DetailTicketPage extends HookConsumerWidget {
             minLines: 5,
             maxLines: null,
           ),
+          const Text(
+            'Status',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral900,
+            ),
+          ),
+          const Gap(12),
+          CustomDropDown<FilterModel>(
+            hint: 'Status',
+            selectedItem: selectStatus,
+            item: filterLocalData,
+            itemLabelBuilder: (value) => value.title,
+            onChanged: (value) {
+              selectStatus.value = value!;
+            },
+          ),
           const Gap(24),
           Button.filled(
-            onPressed: () {},
+            onPressed: () {
+              // ref.read(updateTicketProvider.notifier).action(param: TicketParam(id: id, title: title, description: description))
+            },
             label: 'Update Ticket',
           ),
         ],
