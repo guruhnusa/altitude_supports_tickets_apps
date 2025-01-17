@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../assets/fonts.gen.dart';
 import '../../utils/constant/app_colors.dart';
 
 enum ButtonStyle { filled, outlined }
@@ -9,30 +10,32 @@ class Button extends StatelessWidget {
     super.key,
     required this.onPressed,
     required this.label,
-    this.height = 60.0,
+    this.height = 50.0,
     this.style = ButtonStyle.filled,
-    this.color = Colors.transparent,
-    this.textColor = AppColors.primaryWhite,
+    this.color = AppColors.indigo,
+    this.textColor = Colors.white,
     this.width = double.infinity,
-    this.borderRadius = 15.0,
+    this.borderRadius = 12.0,
     this.icon,
     this.disabled = false,
-    this.fontSize = 20.0,
+    this.fontSize = 16.0,
+    this.borderColor = AppColors.indigo,
   });
 
   const Button.outlined({
     super.key,
     required this.onPressed,
     required this.label,
-    this.height = 60.0,
+    this.height = 50.0,
     this.style = ButtonStyle.outlined,
     this.color = Colors.white,
-    this.textColor = AppColors.primaryWhite,
+    this.textColor = AppColors.indigo,
     this.width = double.infinity,
-    this.borderRadius = 15.0,
+    this.borderRadius = 12.0,
     this.icon,
     this.disabled = false,
-    this.fontSize = 20.0,
+    this.fontSize = 16.0,
+    this.borderColor = AppColors.indigo,
   });
 
   final Function() onPressed;
@@ -46,6 +49,7 @@ class Button extends StatelessWidget {
   final Widget? icon;
   final bool disabled;
   final double fontSize;
+  final Color borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -53,66 +57,65 @@ class Button extends StatelessWidget {
       height: height,
       width: width,
       child: style == ButtonStyle.filled
-          ? Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(borderRadius),
-                color: disabled
-                    ? Colors.grey[100] // Atur ke abu-abu jika disable
-                    : color,
+          ? ElevatedButton(
+              onPressed: disabled ? null : onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: color,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                ),
+              ).copyWith(
+                backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.disabled)) {
+                      return AppColors.neutral200;
+                    }
+                    return color;
+                  },
+                ),
               ),
-              child: ElevatedButton(
-                onPressed: disabled ? null : onPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: color,
-                  shadowColor: color,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    icon ?? const SizedBox.shrink(),
-                    if (icon != null) const SizedBox(width: 10.0),
-                    Text(
-                      label,
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  icon ?? const SizedBox.shrink(),
+                  if (icon != null) const SizedBox(width: 10.0),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: FontFamily.poppins,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             )
-          : Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(borderRadius),
+          : OutlinedButton(
+              onPressed: disabled ? null : onPressed,
+              style: OutlinedButton.styleFrom(
+                backgroundColor: color,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(borderRadius),
+                ),
+                side: BorderSide(color: borderColor, width: 1.0),
               ),
-              child: OutlinedButton(
-                onPressed: disabled ? null : onPressed,
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: color,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    icon ?? const SizedBox.shrink(),
-                    if (icon != null) const SizedBox(width: 10.0),
-                    Text(
-                      label,
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  icon ?? const SizedBox.shrink(),
+                  if (icon != null) const SizedBox(width: 10.0),
+                  Text(
+                    label,
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: textColor,
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: FontFamily.poppins,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
     );

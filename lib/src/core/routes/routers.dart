@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
 import 'router_name.dart';
 
 part 'routers.g.dart';
@@ -17,6 +18,13 @@ Raw<GoRouter> routers(Ref ref) {
         name: RouteName.login,
         builder: (context, state) {
           return const LoginPage();
+        },
+      ),
+      GoRoute(
+        path: PathName.register,
+        name: RouteName.register,
+        builder: (context, state) {
+          return const RegisterPage();
         },
       ),
     ],

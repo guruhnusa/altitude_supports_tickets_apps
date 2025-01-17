@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -20,32 +19,29 @@ class CustomTextField extends StatefulWidget {
   final int? maxLength;
   final TextInputAction? textInputAction;
   final VoidCallback? suffixOnPressed;
-  final double height;
   final List<TextInputFormatter>? inputFormatters;
-  final TextAlign textAlign;
-  final TextAlignVertical? textAlignVertical;
+  final String? error;
 
-  const CustomTextField(
-      {super.key,
-      required this.controller,
-      required this.label,
-      this.filled = Colors.transparent,
-      this.textColor = Colors.black,
-      this.labelColor = AppColors.primaryGrey2,
-      this.isBorder = true,
-      this.keyboardType = TextInputType.text,
-      this.isReadOnly = false,
-      this.onChanged,
-      this.obscureText = false,
-      this.isRequired = false,
-      this.validator,
-      this.maxLength,
-      this.textInputAction,
-      this.suffixOnPressed,
-      this.height = 60,
-      this.inputFormatters,
-      this.textAlign = TextAlign.start,
-      this.textAlignVertical});
+  const CustomTextField({
+    super.key,
+    required this.controller,
+    required this.label,
+    this.filled = Colors.transparent,
+    this.textColor = AppColors.primary500,
+    this.labelColor = AppColors.primary200,
+    this.isBorder = true,
+    this.keyboardType = TextInputType.text,
+    this.isReadOnly = false,
+    this.onChanged,
+    this.obscureText = false,
+    this.isRequired = false,
+    this.validator,
+    this.maxLength,
+    this.textInputAction,
+    this.suffixOnPressed,
+    this.inputFormatters,
+    this.error,
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -53,74 +49,154 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   bool isPassword = true;
+  bool isFilled = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    isFilled = widget.controller.text.isNotEmpty;
+
+    widget.controller.addListener(_onControllerChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onControllerChanged);
+    super.dispose();
+  }
+
+  void _onControllerChanged() {
+    final newIsFilled = widget.controller.text.isNotEmpty;
+    if (newIsFilled != isFilled) {
+      setState(() {
+        isFilled = newIsFilled;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      height: widget.height,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppColors.primaryGrey,
-        borderRadius: BorderRadius.circular(15),
+    return TextFormField(
+      controller: widget.controller,
+      readOnly: widget.isReadOnly,
+      textInputAction: widget.textInputAction,
+      style: const TextStyle(
+        color: AppColors.neutral900,
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
       ),
-      child: TextFormField(
-        controller: widget.controller,
-        readOnly: widget.isReadOnly,
-        textAlign: widget.textAlign,
-        textAlignVertical: widget.textAlignVertical,
-        textInputAction: widget.textInputAction,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: AppColors.primaryGreen,
+      maxLength: widget.maxLength,
+      validator: widget.validator,
+      obscureText: widget.obscureText ? isPassword : false,
+      obscuringCharacter: '*',
+      inputFormatters: widget.inputFormatters,
+      onChanged: (text) {
+        setState(() {
+          isFilled = text.isNotEmpty;
+        });
+        if (widget.onChanged != null) {
+          widget.onChanged!(text);
+        }
+      },
+      keyboardType: widget.keyboardType,
+      onTapOutside: (event) {
+        FocusScope.of(context).unfocus();
+      },
+      decoration: InputDecoration(
+        counter: const Offstage(),
+        suffixIconConstraints: const BoxConstraints(
+          minHeight: 24,
+          minWidth: 24,
         ),
-        onTapOutside: (event) => FocusScope.of(context).unfocus(),
-        maxLength: widget.maxLength,
-        validator: widget.validator,
-        obscureText: widget.obscureText ? isPassword : false,
-        obscuringCharacter: '*',
-        inputFormatters: widget.inputFormatters,
-        onChanged: widget.onChanged,
-        keyboardType: widget.keyboardType,
-        decoration: InputDecoration(
-          counter: const Offstage(),
-          suffixIconConstraints: const BoxConstraints(
-            minHeight: 24,
-            minWidth: 24,
-          ),
-          suffixIcon: widget.obscureText
-              ? GestureDetector(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Icon(
-                      isPassword ? Icons.visibility_off : Icons.visibility,
-                      color: AppColors.primaryGrey2,
-                    ),
+        suffixIcon: widget.obscureText
+            ? GestureDetector(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8, right: 14, bottom: 8),
+                  child: Icon(
+                    isPassword ? Icons.visibility_off : Icons.visibility,
+                    color: AppColors.neutral200,
+                    size: 20,
                   ),
-                  onTap: () {
-                    setState(
-                      () {
-                        isPassword = !isPassword;
-                      },
-                    );
-                  },
-                )
-              : null,
-          errorStyle: const TextStyle(
-            color: AppColors.primaryRed,
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
+                ),
+                onTap: () {
+                  setState(
+                    () {
+                      isPassword = !isPassword;
+                    },
+                  );
+                },
+              )
+            : null,
+        errorStyle: const TextStyle(
+          color: Colors.red,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
+        hintText: widget.label,
+        errorText: widget.error,
+        hintStyle: const TextStyle(
+          color: AppColors.neutral200,
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+        ),
+        contentPadding: const EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 16,
+          bottom: 16,
+        ),
+        filled: true,
+        fillColor: widget.filled,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: AppColors.neutral200,
           ),
-          hintText: widget.label,
-          hintStyle: TextStyle(
-            color: widget.labelColor,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
+        ),
+        enabledBorder: widget.isBorder
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: widget.isReadOnly
+                      ? AppColors.neutral50
+                      : (isFilled ? AppColors.neutral500 : AppColors.neutral200),
+                  width: 1,
+                ),
+              )
+            : InputBorder.none,
+        disabledBorder: widget.isBorder
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: AppColors.neutral200,
+                ),
+              )
+            : InputBorder.none,
+        focusedBorder: widget.isBorder
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(
+                  color: widget.isReadOnly
+                      ? AppColors.neutral50
+                      : (isFilled ? AppColors.neutral500 : AppColors.neutral200),
+                  width: 1,
+                ),
+              )
+            : InputBorder.none,
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 1,
           ),
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.only(bottom: widget.obscureText ? 8 : 12, top: widget.obscureText ? 10 : 12),
-          filled: true,
-          fillColor: widget.filled,
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 1,
+          ),
         ),
       ),
     );

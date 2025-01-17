@@ -22,14 +22,14 @@ class CustomCheckBox extends StatelessWidget {
       ),
       fillColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(WidgetState.selected)) {
-          return AppColors.primaryPurple;
+          return AppColors.indigo;
         }
         return Colors.white;
       }),
       checkColor: Colors.white,
       side: WidgetStateBorderSide.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return const BorderSide(color: AppColors.primaryPurple);
+          return const BorderSide(color: AppColors.indigo);
         }
         return const BorderSide(color: Colors.grey);
       }),

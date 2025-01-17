@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../core/extensions/build_context_ext.dart';
+import '../../../../core/assets/assets.gen.dart';
 import '../../../../core/helpers/buttons/buttons.dart';
 import '../../../../core/helpers/text_field/custom_text_field.dart';
+import '../../../../core/routes/router_name.dart';
 import '../../../../core/utils/constant/app_colors.dart';
 import '../widgets/custom_checkbox.dart';
 
@@ -74,134 +76,108 @@ class LoginPage extends HookConsumerWidget {
     // );
 
     return Scaffold(
-      extendBody: true,
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: const SizedBox.shrink(),
-        centerTitle: false,
-        forceMaterialTransparency: true,
+        backgroundColor: Colors.white,
+        toolbarHeight: 0,
       ),
-      body: Stack(
+      body: ListView(
+        padding: const EdgeInsets.all(20),
         children: [
-          Container(
-            height: double.infinity,
-            width: double.infinity,
-            color: AppColors.primaryPurple,
+          SizedBox(
+            height: 100,
+            child: Image.asset(Assets.logo.logoAltitude.path),
           ),
-          const Positioned(
-            top: 40,
-            child: Center(
-              child: Text(
-                'Altitude Support Ticket System',
+          const Gap(32),
+          const Text(
+            'Altitude Supports \nTicket System',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral900,
+            ),
+          ),
+          const Gap(20),
+          const Text(
+            'Username',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral900,
+            ),
+          ),
+          const Gap(12),
+          CustomTextField(
+            controller: usernameController,
+            label: 'Input your username',
+          ),
+          const Gap(16),
+          const Text(
+            'Password',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.neutral900,
+            ),
+          ),
+          const Gap(12),
+          CustomTextField(
+            controller: passwordController,
+            label: '***********',
+            obscureText: true,
+          ),
+          const Gap(4),
+          Row(
+            children: [
+              CustomCheckBox(
+                isAgree: isRemember,
+                onChanged: (value) {
+                  isRemember.value = value!;
+                },
+              ),
+              const Text(
+                'Remember me',
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.neutral900,
                 ),
               ),
-            ),
+            ],
           ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-              height: (context.deviceHeight + 60) / 2,
-              width: context.deviceWidth,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50),
+          const Gap(16),
+          Button.filled(
+            // disabled: authState.isLoading || isButtonDisabled.value,
+            onPressed: () {},
+            label: 'Login',
+          ),
+          const Gap(16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "Dont't have an account? ",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.neutral900,
                 ),
               ),
-              alignment: Alignment.center,
-              child: ListView(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 35),
-                children: [
-                  const Text(
-                    'Username',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryBlack,
-                    ),
+              InkWell(
+                onTap: () {
+                  WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+                  context.goNamed(RouteName.register);
+                },
+                child: const Text(
+                  'Register',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.indigo,
                   ),
-                  const Gap(12),
-                  CustomTextField(
-                    controller: usernameController,
-                    label: 'Input Username',
-                  ),
-                  const Gap(16),
-                  const Text(
-                    'Kata Sandi',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryBlack,
-                    ),
-                  ),
-                  const Gap(12),
-                  CustomTextField(
-                    controller: passwordController,
-                    label: '***********',
-                    obscureText: true,
-                  ),
-                  Row(
-                    children: [
-                      CustomCheckBox(
-                        isAgree: isRemember,
-                        onChanged: (value) {
-                          isRemember.value = value!;
-                        },
-                      ),
-                      const Text(
-                        'Ingat Saya',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primaryBlack,
-                        ),
-                      ),
-                      
-                    ],
-                  ),
-                  const Gap(12),
-                  Button.filled(
-                    // disabled: authState.isLoading || isButtonDisabled.value,
-                    onPressed: () {},
-                    label: 'Login',
-                  ),
-                  const Gap(16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Belum punya akun? ',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primaryBlack,
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-                        },
-                        child: const Text(
-                          'Daftar Di Sini',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primaryPurple,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+                ),
               ),
-            ),
-          ),
+            ],
+          )
         ],
       ),
     );

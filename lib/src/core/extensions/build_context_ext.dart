@@ -27,7 +27,6 @@ extension BuildContextExt on BuildContext {
         backgroundColor: Colors.red,
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.only(top: 10, left: 20, right: 20),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         content: Text(
           message,
