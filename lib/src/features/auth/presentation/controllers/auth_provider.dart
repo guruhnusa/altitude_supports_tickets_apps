@@ -22,12 +22,12 @@ class Auth extends _$Auth {
     return null;
   }
 
-  Future<void> login({required LoginParam param}) async {
+  Future<void> login({required String username, required String password}) async {
     state = const AsyncLoading();
-    final fcmToken = await ref.watch(fcmTokenProvider.future);
+    final token = await ref.watch(fcmTokenProvider.future);
     log('FCM TOKEN : $fcmToken');
     LoginUsecase login = ref.read(loginUsecaseProvider);
-    final result = await login(param);
+    final result = await login(LoginParam(username: username, password: password, token: token));
     result.fold(
       (error) {
         state = AsyncError(error, StackTrace.current);

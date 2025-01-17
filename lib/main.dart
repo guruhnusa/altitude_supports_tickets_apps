@@ -54,6 +54,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       title: 'Altitude Support Ticket',
       theme: ThemeData(
         fontFamily: FontFamily.poppins,

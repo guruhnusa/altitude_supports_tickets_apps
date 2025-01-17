@@ -5,11 +5,12 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../core/assets/assets.gen.dart';
+import '../../../../core/extensions/build_context_ext.dart';
 import '../../../../core/helpers/buttons/buttons.dart';
 import '../../../../core/helpers/text_field/custom_text_field.dart';
 import '../../../../core/routes/router_name.dart';
 import '../../../../core/utils/constant/app_colors.dart';
-import '../../domain/usecases/param/login_param.dart';
+import '../../data/datasources/local/login_credential_manager.dart';
 import '../controllers/auth_provider.dart';
 import '../widgets/custom_checkbox.dart';
 
@@ -29,15 +30,15 @@ class LoginPage extends HookConsumerWidget {
     }
 
     Future<void> initializeLoginManager() async {
-      // final loginManager = await ref.read(loginManagerProvider.future);
-      // final model = await loginManager.getLogin();
-      // if (model != null) {
-      //   phoneController.text = model.phone;
-      //   passwordController.text = model.password;
-      //   isRemember.value = true;
-      // } else {
-      //   isRemember.value = false;
-      // }
+      LoginCredentialManager manager = await LoginCredentialManager.init();
+      final model = await manager.read();
+      if (model != null) {
+        usernameController.text = model.username;
+        passwordController.text = model.password;
+        isRemember.value = true;
+      } else {
+        isRemember.value = false;
+      }
     }
 
     useEffect(() {
@@ -50,32 +51,33 @@ class LoginPage extends HookConsumerWidget {
       };
     }, [usernameController, passwordController]);
 
-    // ref.listen(
-    //   authProvider,
-    //   (previous, next) async {
-    //     final loginManager = await ref.read(loginManagerProvider.future);
-    //     if (next is AsyncData && next.value != null) {
-    //       if (isRemember.value) {
-    //         final model = LoginCredentialModel(
-    //           phone: phoneController.text,
-    //           password: passwordController.text,
-    //         );
-    //         await loginManager.saveLogin(model: model);
-    //       } else {
-    //         await loginManager.removeLogin();
-    //       }
-    //       if (context.mounted) {
-    //         context.showSuccessSnackbar('Login Berhasil');
-    //         ref.read(routerProvider).pushReplacementNamed(RouteName.main);
-    //       }
-    //     } else if (next is AsyncError) {
-    //       await loginManager.removeLogin();
-    //       if (context.mounted) {
-    //         context.showErrorSnackbar('Gagal Login');
-    //       }
-    //     }
-    //   },
-    // );
+    final authState = ref.watch(authProvider);
+
+    ref.listen(
+      authProvider,
+      (previous, next) async {
+        LoginCredentialManager manager = await LoginCredentialManager.init();
+        if (next is AsyncData && next.value != null) {
+          if (isRemember.value) {
+            await manager.save(
+              username: usernameController.text,
+              password: passwordController.text,
+            );
+          } else {
+            await manager.delete();
+          }
+          if (context.mounted) {
+            context.showSuccessSnackbar(message: 'Login Success');
+            context.pushReplacementNamed(PathName.home);
+          }
+        } else if (next is AsyncError) {
+          await manager.delete();
+          if (context.mounted) {
+            context.showErrorSnackbar(message: 'Login Failed');
+          }
+        }
+      },
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -148,13 +150,11 @@ class LoginPage extends HookConsumerWidget {
           ),
           const Gap(16),
           Button.filled(
-            // disabled: authState.isLoading || isButtonDisabled.value,
+            disabled: authState.isLoading || isButtonDisabled.value,
             onPressed: () {
               ref.read(authProvider.notifier).login(
-                    param: LoginParam(
-                      username: usernameController.text,
-                      password: passwordController.text,
-                    ),
+                    username: usernameController.text,
+                    password: passwordController.text,
                   );
               context.pushReplacementNamed(PathName.home);
             },

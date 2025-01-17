@@ -6,7 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+import '../../../../main.dart';
 
 class NotificationServices {
   Future<void> requestPermission() async {
@@ -37,17 +37,18 @@ class NotificationServices {
         description: 'This channel is used for important notifications',
         importance: Importance.max,
         playSound: true,
-        enableVibration: true,
       );
 
       const InitializationSettings initSettings = InitializationSettings(
-        android: AndroidInitializationSettings("@mipmap/launcher_icon"),
+        android: AndroidInitializationSettings("@mipmap/ic_launcher"),
         iOS: DarwinInitializationSettings(),
       );
 
       await flutterLocalNotificationsPlugin.initialize(
         initSettings,
-        onDidReceiveNotificationResponse: (details) {},
+        onDidReceiveNotificationResponse: (details) {
+          log('onDidReceiveNotificationResponse: ${details.payload}');
+        },
       );
 
       await flutterLocalNotificationsPlugin
