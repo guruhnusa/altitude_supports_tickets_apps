@@ -10,7 +10,6 @@ import 'firebase_options.dart';
 import 'src/core/assets/fonts.gen.dart';
 import 'src/core/routes/routers.dart';
 import 'src/core/utils/permission/notification_services.dart';
-import 'src/features/auth/presentation/controllers/is_agent_provider.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -54,29 +53,16 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return _EagerInitialization(
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: 'Altitude Support Ticket',
-        theme: ThemeData(
-          fontFamily: FontFamily.poppins,
-          scaffoldBackgroundColor: Colors.white,
-        ),
-        routeInformationParser: ref.watch(routersProvider).routeInformationParser,
-        routeInformationProvider: ref.watch(routersProvider).routeInformationProvider,
-        routerDelegate: ref.watch(routersProvider).routerDelegate,
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      title: 'Altitude Support Ticket',
+      theme: ThemeData(
+        fontFamily: FontFamily.poppins,
+        scaffoldBackgroundColor: Colors.white,
       ),
+      routeInformationParser: ref.watch(routersProvider).routeInformationParser,
+      routeInformationProvider: ref.watch(routersProvider).routeInformationProvider,
+      routerDelegate: ref.watch(routersProvider).routerDelegate,
     );
-  }
-}
-
-class _EagerInitialization extends ConsumerWidget {
-  const _EagerInitialization({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    ref.watch(isAgentProvider);
-    return child;
   }
 }

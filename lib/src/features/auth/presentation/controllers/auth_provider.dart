@@ -70,7 +70,12 @@ class Auth extends _$Auth {
         state = AsyncError(error, StackTrace.current);
         state = const AsyncData(null);
       },
-      (data) {
+      (data) async {
+        TokenManager tokenManager = await TokenManager.init();
+        await tokenManager.delete();
+        UserManager userManager = await UserManager.init();
+        await userManager.delete();
+        ref.invalidate(isAgentProvider);
         state = const AsyncData('Logout Success');
       },
     );

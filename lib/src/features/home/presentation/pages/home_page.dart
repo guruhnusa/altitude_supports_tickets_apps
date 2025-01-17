@@ -11,6 +11,7 @@ import '../../../../core/routes/router_name.dart';
 import '../../../../core/utils/constant/app_colors.dart';
 import '../../../../core/utils/permission/notification_services.dart';
 import '../../../auth/presentation/controllers/auth_provider.dart';
+import '../../../auth/presentation/controllers/is_agent_provider.dart';
 import '../../data/datasources/local/filter_local_data.dart';
 import '../../domain/models/filter_model.dart';
 import '../controllers/get_tickets_provider.dart';
@@ -31,6 +32,8 @@ class HomePage extends HookConsumerWidget {
 
     final notificationServices = NotificationServices();
 
+    final isAgentState = ref.watch(isAgentProvider);
+
     useEffect(() {
       notificationServices.setupNotifications(context);
       notificationServices.setupNotificationInBacknTerminated(context);
@@ -38,168 +41,179 @@ class HomePage extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
-      appBar: CustomAppBar(
-        isBack: false,
-        title: 'Ticket Support',
-        actions: IconButton(
-          icon: const Icon(
-            Icons.logout,
-            color: Colors.red,
-          ),
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return Consumer(
-                  builder: (context, ref, child) {
-                    ref.listen(
-                      authProvider,
-                      (previous, next) {
-                        if (next is AsyncData && next.value != null) {
-                          context.pushReplacementNamed(PathName.login);
-                        } else if (next is AsyncError) {
-                          context.showErrorSnackbar(message: 'Failed to logout');
-                        }
-                      },
-                    );
-                    return AlertDialog(
-                      title: const Text('Logout'),
-                      content: const Text('Are you sure want to logout?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            context.pop();
-                          },
-                          child: const Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            ref.read(authProvider.notifier).logout();
-                            context.pop();
-                          },
-                          child: const Text('Yes'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            );
-          },
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            const Gap(12),
-            SizedBox(
-              height: 40,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: filterData.length,
-                itemBuilder: (context, index) {
-                  final data = filterData[index];
-                  return FilterItem(
-                    isSelected: selectFilter.value == data,
-                    onTap: () {
-                      selectFilter.value = data;
-                      ref.read(getTicketsProvider.notifier).filterByStatus(status: data.value);
-                    },
-                    title: data.title,
-                  );
-                },
-                separatorBuilder: (context, index) => const Gap(8),
-              ),
+        appBar: CustomAppBar(
+          isBack: false,
+          title: 'Ticket Support',
+          actions: IconButton(
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.red,
             ),
-            const Gap(12),
-            RefreshIndicator(
-              onRefresh: () async {
-                ref.invalidate(getTicketsProvider);
-              },
-              child: SingleChildScrollView(
-                child: ticketState.when(
-                  skipLoadingOnRefresh: false,
-                  data: (data) {
-                    if (data.isEmpty) {
-                      return const Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          //icon kosong
-                          Icon(
-                            Icons.hourglass_empty,
-                            size: 100,
-                            color: AppColors.neutral100,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Consumer(
+                    builder: (context, ref, child) {
+                      ref.listen(
+                        authProvider,
+                        (previous, next) {
+                          if (next is AsyncData && next.value != null) {
+                            context.pop();
+                            context.pushReplacementNamed(PathName.login);
+                          } else if (next is AsyncError) {
+                            context.pop();
+                            context.showErrorSnackbar(message: 'Failed to logout');
+                          }
+                        },
+                      );
+                      return AlertDialog(
+                        title: const Text('Logout'),
+                        content: const Text('Are you sure want to logout?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              context.pop();
+                            },
+                            child: const Text('Cancel'),
                           ),
-                          Gap(12),
-                          Center(
-                            child: Text(
-                              'Ticket is Empty',
-                              style: TextStyle(
-                                color: AppColors.neutral100,
-                                fontSize: 16,
-                              ),
-                            ),
+                          TextButton(
+                            onPressed: () {
+                              ref.read(authProvider.notifier).logout();
+                            },
+                            child: const Text('Yes'),
                           ),
                         ],
                       );
-                    }
-                    return ListView.separated(
-                      itemCount: data.length,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: const EdgeInsets.only(bottom: 20),
-                      itemBuilder: (context, index) {
-                        final ticket = data[index];
-                        return TicketItem(
-                          ticket: ticket,
-                          onTap: () {
-                            context.pushNamed(PathName.detailTicket, extra: ticket);
-                          },
-                        );
+                    },
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              const Gap(12),
+              SizedBox(
+                height: 40,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: filterData.length,
+                  itemBuilder: (context, index) {
+                    final data = filterData[index];
+                    return FilterItem(
+                      isSelected: selectFilter.value == data,
+                      onTap: () {
+                        selectFilter.value = data;
+                        ref.read(getTicketsProvider.notifier).filterByStatus(status: data.value);
                       },
-                      separatorBuilder: (context, index) => const Gap(12),
+                      title: data.title,
                     );
                   },
-                  error: (error, stackTrace) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Error Get Data',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        const Gap(12),
-                        Button.outlined(
-                          width: 200,
-                          onPressed: () {
-                            ref.invalidate(getTicketsProvider);
-                          },
-                          label: 'Retry',
-                        ),
-                      ],
-                    );
-                  },
-                  loading: () {
-                    return const ShimmerTicketItem();
-                  },
+                  separatorBuilder: (context, index) => const Gap(8),
                 ),
               ),
-            ),
-          ],
+              const Gap(12),
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(getTicketsProvider);
+                  },
+                  child: ticketState.when(
+                    skipLoadingOnRefresh: false,
+                    data: (data) {
+                      if (data.isEmpty) {
+                        return const Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            //icon kosong
+                            Icon(
+                              Icons.hourglass_empty,
+                              size: 100,
+                              color: AppColors.neutral100,
+                            ),
+                            Gap(12),
+                            Center(
+                              child: Text(
+                                'Ticket is Empty',
+                                style: TextStyle(
+                                  color: AppColors.neutral100,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                      return ListView.separated(
+                        itemCount: data.length,
+                        padding: const EdgeInsets.only(bottom: 20),
+                        itemBuilder: (context, index) {
+                          final ticket = data[index];
+                          return TicketItem(
+                            ticket: ticket,
+                            onTap: () {
+                              context.pushNamed(PathName.detailTicket, extra: ticket);
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) => const Gap(12),
+                      );
+                    },
+                    error: (error, stackTrace) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Error Get Data',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          const Gap(12),
+                          Button.outlined(
+                            width: 200,
+                            onPressed: () {
+                              ref.invalidate(getTicketsProvider);
+                            },
+                            label: 'Retry',
+                          ),
+                        ],
+                      );
+                    },
+                    loading: () {
+                      return const ShimmerTicketItem();
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.indigo,
-        onPressed: () {
-          context.pushNamed(PathName.addTicket);
-        },
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-    );
+        floatingActionButton: isAgentState.when(
+          data: (data) {
+            return data == false
+                ? FloatingActionButton(
+                    backgroundColor: AppColors.indigo,
+                    onPressed: () {
+                      context.pushNamed(PathName.addTicket);
+                    },
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                  )
+                : null;
+          },
+          error: (error, stackTrace) {
+            return null;
+          },
+          loading: () {
+            return null;
+          },
+        ));
   }
 }

@@ -18,6 +18,7 @@ class GetTickets extends _$GetTickets {
         throw error;
       },
       (data) {
+        _listTicket.clear();
         _listTicket.addAll(data);
         return data;
       },
@@ -27,13 +28,14 @@ class GetTickets extends _$GetTickets {
   //fitler by status
 
   void filterByStatus({required String status}) {
-    // ubah state async data berdasarkan filter status
-    final filterData = _listTicket;
+    // Update the state with filtered tickets based on the status
     if (status == 'all') {
+      // Show all tickets when 'all' is selected
       state = AsyncData(_listTicket);
     } else {
-      final filter = filterData.where((element) => element.status == status).toList();
-      state = AsyncData(filter);
+      // Filter tickets by the given status
+      final filteredTickets = _listTicket.where((ticket) => ticket.status == status).toList();
+      state = AsyncData(filteredTickets);
     }
   }
 }

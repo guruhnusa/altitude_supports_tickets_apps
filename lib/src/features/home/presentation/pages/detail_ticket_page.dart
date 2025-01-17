@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -41,6 +43,7 @@ class DetailTicketPage extends HookConsumerWidget {
       (previous, next) {
         if (next is AsyncData && next.value != null) {
           context.pop();
+          context.showSuccessSnackbar(message: 'Ticket updated');
         } else if (next is AsyncError) {
           context.showErrorSnackbar(message: 'Failed to update ticket');
         }
@@ -68,6 +71,7 @@ class DetailTicketPage extends HookConsumerWidget {
           CustomTextField(
             controller: titleController,
             label: 'Input Title',
+            isReadOnly: true,
           ),
           const Gap(16),
           const Text(
@@ -84,7 +88,9 @@ class DetailTicketPage extends HookConsumerWidget {
             label: '',
             minLines: 5,
             maxLines: null,
+            isReadOnly: true,
           ),
+          const Gap(16),
           const Text(
             'Status',
             style: TextStyle(
@@ -94,34 +100,50 @@ class DetailTicketPage extends HookConsumerWidget {
             ),
           ),
           const Gap(12),
-          CustomDropDown<FilterModel>(
-            hint: 'Status',
-            selectedItem: selectStatus,
-            item: statusLocalData,
-            itemLabelBuilder: (value) => value.title,
-            onChanged: (value) {
-              selectStatus.value = value!;
-            },
-          ),
-          const Gap(24),
           isAgentState.when(
             data: (data) {
+              log('isAgentState: $data');
               if (data) {
-                return Button.filled(
-                  onPressed: () {
-                    ref.read(updateTicketProvider.notifier).action(
-                          param: TicketParam(
-                            id: ticket.id,
-                            title: titleController.text,
-                            description: descriptionController.text,
-                            status: selectStatus.value.value,
-                          ),
-                        );
-                  },
-                  label: 'Update Ticket',
+                return Column(
+                  children: [
+                    CustomDropDown<FilterModel>(
+                      hint: 'Status',
+                      selectedItem: selectStatus,
+                      item: statusLocalData,
+                      itemLabelBuilder: (value) => value.title,
+                      onChanged: (value) {
+                        selectStatus.value = value!;
+                      },
+                    ),
+                    const Gap(24),
+                    Button.filled(
+                      onPressed: () {
+                        ref.read(updateTicketProvider.notifier).action(
+                              param: TicketParam(
+                                id: ticket.id,
+                                title: titleController.text,
+                                description: descriptionController.text,
+                                status: selectStatus.value.value,
+                              ),
+                            );
+                      },
+                      label: 'Update Ticket',
+                    ),
+                  ],
                 );
               } else {
-                return const SizedBox();
+                return Text(
+                  selectStatus.value.title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: ticket.status == 'Open'
+                        ? Colors.green.withOpacity(0.8)
+                        : ticket.status == 'On Progress'
+                            ? Colors.yellow.withOpacity(0.8)
+                            : Colors.red.withOpacity(0.8),
+                  ),
+                );
               }
             },
             error: (error, stackTrace) {

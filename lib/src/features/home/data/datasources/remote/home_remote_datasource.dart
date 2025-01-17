@@ -26,7 +26,7 @@ class HomeRemoteDatasourceImpl implements HomeRemoteDatasource {
           "description": param.description,
         },
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return const Right('Success add ticket');
       } else {
         return Left(Failure(response.data['message']));
@@ -64,7 +64,7 @@ class HomeRemoteDatasourceImpl implements HomeRemoteDatasource {
   @override
   Future<Either<Failure, String>> updateTicket({required TicketParam param}) async {
     try {
-      final response = await httpClient.put(
+      final response = await httpClient.patch(
         'tickets/${param.id}',
         data: {
           "title": param.title,

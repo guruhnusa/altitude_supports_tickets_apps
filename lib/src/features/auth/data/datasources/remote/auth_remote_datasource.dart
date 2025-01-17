@@ -56,7 +56,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
           validateStatus: (status) => status! < 500,
         ),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         return const Right('Registrasi berhasil');
       } else {
         return Left(Failure(response.data['message']));

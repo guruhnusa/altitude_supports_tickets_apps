@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../core/utils/constant/app_colors.dart';
+import '../../data/datasources/local/status_local_data.dart';
 import '../../domain/models/ticket_model.dart';
 
 class TicketItem extends StatelessWidget {
@@ -15,6 +16,8 @@ class TicketItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final statusItem = statusLocalData;
+    final status = statusItem.firstWhere((element) => ticket.status == element.value);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -62,18 +65,21 @@ class TicketItem extends StatelessWidget {
                 horizontal: 8,
               ),
               decoration: BoxDecoration(
-                color: AppColors.indigo.withOpacity(0.1),
+                color: status.value == 'open'
+                    ? Colors.green.withOpacity(0.1)
+                    : ticket.status == 'on_progress'
+                        ? Colors.yellow.withOpacity(0.1)
+                        : Colors.red.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                ticket.status,
+                status.title,
                 style: TextStyle(
-                
-                  color: ticket.status == 'Open'
-                      ? Colors.green.withOpacity(0.3)
-                      : ticket.status == 'On Progress'
-                          ? Colors.yellow.withOpacity(0.3)
-                          : Colors.red.withOpacity(0.3),
+                  color: status.value == 'open'
+                      ? Colors.green.withOpacity(0.8)
+                      : ticket.status == 'on_progress'
+                          ? Colors.yellow.withOpacity(0.8)
+                          : Colors.red.withOpacity(0.8),
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),

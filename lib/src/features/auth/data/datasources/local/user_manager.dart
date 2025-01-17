@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -22,7 +23,9 @@ class UserManager {
   Future<User?> read() async {
     final userData = await _storage.read(key: 'user');
     if (userData != null) {
-      return User.fromJson(jsonDecode(userData));
+      final user = User.fromJson(jsonDecode(userData));
+      log('User : ${user.toJson()}');
+      return user;
     } else {
       return null;
     }
@@ -30,11 +33,5 @@ class UserManager {
 
   Future<void> delete() async {
     await _storage.delete(key: 'user');
-  }
-
- 
-  Future<bool?> isAgent() async {
-    final user = await read();
-    return user?.role == 'agent';
   }
 }

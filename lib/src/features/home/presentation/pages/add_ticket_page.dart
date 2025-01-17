@@ -42,6 +42,7 @@ class AddTicketPage extends HookConsumerWidget {
       (previous, next) {
         if (next is AsyncData && next.value != null) {
           context.pop();
+          context.showSuccessSnackbar(message: 'Ticket added');
         } else if (next is AsyncError) {
           context.showErrorSnackbar(message: 'Failed to add ticket');
         }

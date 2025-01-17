@@ -12,6 +12,8 @@ import '../../../../core/helpers/text_field/custom_text_field.dart';
 import '../../../../core/helpers/widgets/custom_appbar.dart';
 import '../../../../core/routes/router_name.dart';
 import '../../../../core/utils/constant/app_colors.dart';
+import '../../domain/usecases/param/register_param.dart';
+import '../controllers/auth_provider.dart';
 
 class RegisterPage extends HookConsumerWidget {
   const RegisterPage({super.key});
@@ -47,7 +49,29 @@ class RegisterPage extends HookConsumerWidget {
         context.showErrorSnackbar(message: 'Password and Confirm Password must be the same');
         return;
       }
+
+      RegisterParam param = RegisterParam(
+        username: usernameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      ref.read(authProvider.notifier).register(param: param);
     }
+
+    ref.listen(
+      authProvider,
+      (previous, next) {
+        if (next is AsyncData && next.value != null) {
+          context.showSuccessSnackbar(message: 'Register Success');
+          context.goNamed(PathName.login);
+        } else if (next is AsyncError) {
+          context.showErrorSnackbar(message: next.error.toString());
+        }
+      },
+    );
+
+    final authState = ref.watch(authProvider);
 
     return PopScope(
       canPop: false,
@@ -127,7 +151,7 @@ class RegisterPage extends HookConsumerWidget {
             ),
             const Gap(16),
             Button.filled(
-              // disabled: authState.isLoading || isButtonDisabled.value,
+              disabled: authState.isLoading,
               onPressed: () {
                 validation();
               },
