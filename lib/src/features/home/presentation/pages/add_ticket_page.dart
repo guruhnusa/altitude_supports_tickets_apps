@@ -17,6 +17,23 @@ class AddTicketPage extends HookConsumerWidget {
     final titleController = useTextEditingController();
     final descriptionController = useTextEditingController();
 
+    final buttonEnabled = useState(
+      titleController.text.isNotEmpty && descriptionController.text.isNotEmpty,
+    );
+
+    useEffect(() {
+      listener() {
+        buttonEnabled.value = titleController.text.isNotEmpty && descriptionController.text.isNotEmpty;
+      }
+
+      titleController.addListener(listener);
+      descriptionController.addListener(listener);
+      return () {
+        titleController.removeListener(listener);
+        descriptionController.removeListener(listener);
+      };
+    }, [titleController, descriptionController]);
+
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Add Ticket',
@@ -58,6 +75,7 @@ class AddTicketPage extends HookConsumerWidget {
           ),
           const Gap(24),
           Button.filled(
+            disabled: !buttonEnabled.value,
             onPressed: () {},
             label: 'Submit Ticket',
           ),
