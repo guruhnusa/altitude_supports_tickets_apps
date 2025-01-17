@@ -156,7 +156,6 @@ class LoginPage extends HookConsumerWidget {
                     username: usernameController.text,
                     password: passwordController.text,
                   );
-              context.pushReplacementNamed(PathName.home);
             },
             label: 'Login',
           ),

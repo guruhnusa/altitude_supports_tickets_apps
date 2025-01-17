@@ -11,6 +11,7 @@ class ShimmerTicketItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       itemCount: 10,
+      shrinkWrap: true,
       padding: const EdgeInsets.only(bottom: 20),
       itemBuilder: (context, index) {
         return Shimmer.fromColors(

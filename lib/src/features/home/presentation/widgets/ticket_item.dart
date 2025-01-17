@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 import '../../../../core/utils/constant/app_colors.dart';
+import '../../domain/models/ticket_model.dart';
 
 class TicketItem extends StatelessWidget {
+  final TicketModel ticket;
   final Function() onTap;
   const TicketItem({
     super.key,
+    required this.ticket,
     required this.onTap,
   });
 
@@ -26,24 +29,24 @@ class TicketItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Expanded(
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Ticket #',
+                    ticket.title,
                     maxLines: 1,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColors.neutral900,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Gap(4),
+                  const Gap(4),
                   Text(
-                    'Description Ticket',
+                    ticket.description,
                     maxLines: 2,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.neutral700,
                       fontWeight: FontWeight.w400,
@@ -62,10 +65,15 @@ class TicketItem extends StatelessWidget {
                 color: AppColors.indigo.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                'Open',
+              child: Text(
+                ticket.status,
                 style: TextStyle(
-                  color: AppColors.indigo,
+                
+                  color: ticket.status == 'Open'
+                      ? Colors.green.withOpacity(0.3)
+                      : ticket.status == 'On Progress'
+                          ? Colors.yellow.withOpacity(0.3)
+                          : Colors.red.withOpacity(0.3),
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),

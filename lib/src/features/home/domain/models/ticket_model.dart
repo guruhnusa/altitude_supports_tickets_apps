@@ -1,27 +1,19 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class TicketModel {
-  final String id;
-  final String status;
+part 'ticket_model.freezed.dart';
+part 'ticket_model.g.dart';
 
-  TicketModel({required this.id, required this.status});
+@freezed
+class TicketModel with _$TicketModel {
+  const factory TicketModel({
+    @JsonKey(name: "_id") required String id,
+    @JsonKey(name: "title") required String title,
+    @JsonKey(name: "description") required String description,
+    @JsonKey(name: "status") required String status,
+    @JsonKey(name: "createdAt") required String createdAt,
+    @JsonKey(name: "updatedAt") required String updatedAt,
+    @JsonKey(name: "__v") required int v,
+  }) = _TicketModel;
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'status': status,
-    };
-  }
-
-  factory TicketModel.fromMap(Map<String, dynamic> map) {
-    return TicketModel(
-      id: map['id'] as String,
-      status: map['status'] as String,
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory TicketModel.fromJson(String source) => TicketModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory TicketModel.fromJson(Map<String, dynamic> json) => _$TicketModelFromJson(json);
 }

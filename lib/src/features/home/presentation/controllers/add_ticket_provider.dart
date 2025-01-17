@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/usecases/add_ticket_usecase.dart';
 import '../../domain/usecases/param/ticket_param.dart';
+import 'get_tickets_provider.dart';
 import 'usecase/add_ticket_usecase_provider.dart';
 
 part 'add_ticket_provider.g.dart';
@@ -23,6 +24,7 @@ class AddTicket extends _$AddTicket {
         state = const AsyncData(null);
       },
       (data) {
+        ref.invalidate(getTicketsProvider);
         state = AsyncData(data);
       },
     );

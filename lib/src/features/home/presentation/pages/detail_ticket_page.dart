@@ -1,27 +1,51 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../core/extensions/build_context_ext.dart';
 import '../../../../core/helpers/buttons/buttons.dart';
 import '../../../../core/helpers/text_field/custom_text_field.dart';
 import '../../../../core/helpers/widgets/custom_appbar.dart';
 import '../../../../core/helpers/widgets/custom_drop_down.dart';
 import '../../../../core/utils/constant/app_colors.dart';
+import '../../../auth/presentation/controllers/is_agent_provider.dart';
 import '../../data/datasources/local/status_local_data.dart';
 import '../../domain/models/filter_model.dart';
+import '../../domain/models/ticket_model.dart';
+import '../../domain/usecases/param/ticket_param.dart';
+import '../controllers/update_ticket_provider.dart';
 
 class DetailTicketPage extends HookConsumerWidget {
-  const DetailTicketPage({super.key});
+  final TicketModel ticket;
+  const DetailTicketPage({
+    super.key,
+    required this.ticket,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titleController = useTextEditingController();
-    final descriptionController = useTextEditingController();
+    final titleController = useTextEditingController(text: ticket.title);
+    final descriptionController = useTextEditingController(text: ticket.description);
 
-    final selectStatus = useState<FilterModel>(statusLocalData.first);
+    final selectStatus = useState<FilterModel>(
+      statusLocalData.firstWhere((element) => ticket.status == element.value),
+    );
 
+    final isAgentState = ref.watch(isAgentProvider);
+
+    ref.listen(
+      updateTicketProvider,
+      (previous, next) {
+        if (next is AsyncData && next.value != null) {
+          context.pop();
+        } else if (next is AsyncError) {
+          context.showErrorSnackbar(message: 'Failed to update ticket');
+        }
+      },
+    );
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Detail Ticket',
@@ -80,11 +104,32 @@ class DetailTicketPage extends HookConsumerWidget {
             },
           ),
           const Gap(24),
-          Button.filled(
-            onPressed: () {
-              // ref.read(updateTicketProvider.notifier).action(param: TicketParam(id: id, title: title, description: description))
+          isAgentState.when(
+            data: (data) {
+              if (data) {
+                return Button.filled(
+                  onPressed: () {
+                    ref.read(updateTicketProvider.notifier).action(
+                          param: TicketParam(
+                            id: ticket.id,
+                            title: titleController.text,
+                            description: descriptionController.text,
+                            status: selectStatus.value.value,
+                          ),
+                        );
+                  },
+                  label: 'Update Ticket',
+                );
+              } else {
+                return const SizedBox();
+              }
             },
-            label: 'Update Ticket',
+            error: (error, stackTrace) {
+              return const SizedBox();
+            },
+            loading: () {
+              return const SizedBox();
+            },
           ),
         ],
       ),

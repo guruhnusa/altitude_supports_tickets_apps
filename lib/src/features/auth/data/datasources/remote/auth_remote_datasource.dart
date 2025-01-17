@@ -21,11 +21,8 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<Either<Failure, LoginModel>> login({required LoginParam param}) async {
     try {
       final response = await httpClient.post(
-        'login',
-        data: {
-          'username': param.username,
-          'password': param.password,
-        },
+        'users/login',
+        data: {'username': param.username, 'password': param.password, 'fcmToken': param.token},
         options: Options(
           validateStatus: (status) => status! < 500,
         ),
@@ -48,11 +45,12 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<Either<Failure, String>> register({required RegisterParam param}) async {
     try {
       final response = await httpClient.post(
-        'register',
+        'users/register',
         data: {
           'username': param.username,
           'email': param.email,
           'password': param.password,
+          'role': 'customer',
         },
         options: Options(
           validateStatus: (status) => status! < 500,
@@ -75,7 +73,7 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource {
   Future<Either<Failure, String>> logout() async {
     try {
       final response = await httpClient.post(
-        'logout',
+        'users/logout',
       );
       if (response.statusCode == 200) {
         return const Right('Logout berhasil');

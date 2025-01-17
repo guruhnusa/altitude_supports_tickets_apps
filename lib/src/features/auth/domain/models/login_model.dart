@@ -1,24 +1,30 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-class LoginModel {
-  final String id;
+part 'login_model.freezed.dart';
+part 'login_model.g.dart';
 
-  LoginModel({required this.id});
+@freezed
+class LoginModel with _$LoginModel {
+  const factory LoginModel({
+    @JsonKey(name: "user") User? user,
+    @JsonKey(name: "token") String? token,
+  }) = _LoginModel;
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-    };
-  }
+  factory LoginModel.fromJson(Map<String, dynamic> json) => _$LoginModelFromJson(json);
+}
 
-  factory LoginModel.fromMap(Map<String, dynamic> map) {
-    return LoginModel(
-      id: map['id'] as String,
-    );
-  }
+@freezed
+class User with _$User {
+  const factory User({
+    @JsonKey(name: "_id") String? id,
+    @JsonKey(name: "username") String? username,
+    @JsonKey(name: "password") String? password,
+    @JsonKey(name: "role") String? role,
+    @JsonKey(name: "email") String? email,
+    @JsonKey(name: "createdAt") String? createdAt,
+    @JsonKey(name: "__v") int? v,
+    @JsonKey(name: "fcmToken") String? fcmToken,
+  }) = _User;
 
-  String toJson() => json.encode(toMap());
-
-  factory LoginModel.fromJson(String source) => LoginModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }

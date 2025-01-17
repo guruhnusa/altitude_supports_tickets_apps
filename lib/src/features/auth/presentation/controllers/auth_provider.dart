@@ -3,12 +3,14 @@ import 'dart:developer';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/datasources/local/token_manager.dart';
+import '../../data/datasources/local/user_manager.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/param/login_param.dart';
 import '../../domain/usecases/param/register_param.dart';
 import '../../domain/usecases/register_usecase.dart';
 import 'fcm_token_provider.dart';
+import 'is_agent_provider.dart';
 import 'usecase/login_provider.dart';
 import 'usecase/logout_provider.dart';
 import 'usecase/register_provider.dart';
@@ -18,7 +20,7 @@ part 'auth_provider.g.dart';
 @riverpod
 class Auth extends _$Auth {
   @override
-  FutureOr<String?> build() {
+  FutureOr<String?> build() async {
     return null;
   }
 
@@ -35,7 +37,10 @@ class Auth extends _$Auth {
       },
       (data) async {
         TokenManager tokenManager = await TokenManager.init();
-        await tokenManager.save(token: 'data.token');
+        await tokenManager.save(token: data.token!);
+        UserManager userManager = await UserManager.init();
+        await userManager.save(user: data.user!);
+        ref.read(isAgentProvider);
         state = const AsyncData('Login Success');
       },
     );

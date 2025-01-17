@@ -4,10 +4,13 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import '../../../../core/extensions/build_context_ext.dart';
 import '../../../../core/helpers/buttons/buttons.dart';
 import '../../../../core/helpers/text_field/custom_text_field.dart';
 import '../../../../core/helpers/widgets/custom_appbar.dart';
 import '../../../../core/utils/constant/app_colors.dart';
+import '../../domain/usecases/param/ticket_param.dart';
+import '../controllers/add_ticket_provider.dart';
 
 class AddTicketPage extends HookConsumerWidget {
   const AddTicketPage({super.key});
@@ -33,6 +36,17 @@ class AddTicketPage extends HookConsumerWidget {
         descriptionController.removeListener(listener);
       };
     }, [titleController, descriptionController]);
+
+    ref.listen(
+      addTicketProvider,
+      (previous, next) {
+        if (next is AsyncData && next.value != null) {
+          context.pop();
+        } else if (next is AsyncError) {
+          context.showErrorSnackbar(message: 'Failed to add ticket');
+        }
+      },
+    );
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -76,7 +90,14 @@ class AddTicketPage extends HookConsumerWidget {
           const Gap(24),
           Button.filled(
             disabled: !buttonEnabled.value,
-            onPressed: () {},
+            onPressed: () {
+              ref.read(addTicketProvider.notifier).action(
+                    param: TicketParam(
+                      title: titleController.text,
+                      description: descriptionController.text,
+                    ),
+                  );
+            },
             label: 'Submit Ticket',
           ),
         ],

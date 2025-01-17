@@ -47,8 +47,8 @@ class HomeRemoteDatasourceImpl implements HomeRemoteDatasource {
       );
       if (response.statusCode == 200) {
         final List<TicketModel> tickets = [];
-        for (var item in response.data['data']) {
-          tickets.add(TicketModel.fromMap(item));
+        for (var item in response.data['data']['tickets']) {
+          tickets.add(TicketModel.fromJson(item));
         }
         return tickets;
       } else {

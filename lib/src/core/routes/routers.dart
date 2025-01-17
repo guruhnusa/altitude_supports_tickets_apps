@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/auth/data/datasources/local/token_manager.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/home/domain/models/ticket_model.dart';
 import '../../features/home/presentation/pages/add_ticket_page.dart';
 import '../../features/home/presentation/pages/detail_ticket_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
@@ -58,7 +59,10 @@ Raw<GoRouter> routers(Ref ref) {
         path: PathName.detailTicket,
         name: RouteName.detailTicket,
         builder: (context, state) {
-          return const DetailTicketPage();
+          final ticket = state.extra as TicketModel;
+          return DetailTicketPage(
+            ticket: ticket,
+          );
         },
       ),
     ],

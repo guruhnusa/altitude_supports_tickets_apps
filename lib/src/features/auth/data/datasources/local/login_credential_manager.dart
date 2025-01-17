@@ -20,8 +20,11 @@ class LoginCredentialManager {
   Future<LoginCredentialModel?> read() async {
     final username = await _storage.read(key: 'username');
     final password = await _storage.read(key: 'password');
-    final model = LoginCredentialModel(username: username!, password: password!);
-    return model;
+    if (username != null && password != null) {
+      return LoginCredentialModel(username: username, password: password);
+    } else {
+      return null;
+    }
   }
 
   Future<void> delete() async {
